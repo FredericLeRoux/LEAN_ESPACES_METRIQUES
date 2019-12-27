@@ -58,11 +58,6 @@ assumption,
 end
 
 
-
-variables (x y : X) (r : ℝ)
-#check boule x r
-#check @boule X _ x r
-
 /-- Une partie d'un espace métrique `X` est ouverte si elle contient une boule ouverte de rayon 
 strictement positif autour de chacun de ses points. -/
 def ouvert (A : set X) := ∀ x ∈ A, ∃ r > 0, boule x r ⊆ A
@@ -203,7 +198,7 @@ def Int (E : set X) := let I := {O : set X | ouvert O ∧ O ⊆ E} in ⋃₀ I
 /-- Caractérisation métrique de l'inétrieur -/
 lemma interieur_metrique (E : set X) : Int E = { x : X | ∃ r>0, boule x r ⊆ E } :=
 begin
-  -- Nous raisonnons par doublue inclusion
+  -- Nous raisonnons par double inclusion
   rw le_antisymm_iff, split,  -- comment avoir la bonne notation pour l'inclusion ?
   -- Soit x dans l'intérieur de E
   intros x x_dans_Int, simp,
@@ -228,18 +223,12 @@ begin
   exact boule_inc_Int (centre_mem_boule x r r_pos),
 end
 
-#print set.sUnion
 
-example (P: X → Prop) (A : set X) (h: A = {x : X | P x}) : x ∈ A ↔ P x :=
-begin
-  apply iff_of_eq,
-  exact congr_arg (has_mem.mem x) h,
-  --exact iff_of_eq (congr_arg (has_mem.mem x) h),
-end
+def est_voisinage (V : set X) (x : X) := x ∈ Int V
 
+-- caractérisation d'un voisinage en termes d'ouverts ?
+-- caractérisation en terme de boules ?
 
-
--- Voisinages ?
 
 end fondements
 
@@ -292,8 +281,8 @@ begin
     simp [boule],
     have symetrie : d_[Y] (f x') (f x) = d_[Y] (f x) (f x'), from sym (f x') (f x),
     rw symetrie at hfx', 
-    assumption},
-    {-- Pour l'autre direction, on suppose que l'image réciproque de tout ouvert est un ouvert,
+    assumption },
+  { -- Pour l'autre direction, on suppose que l'image réciproque de tout ouvert est un ouvert,
     -- on prend un point x et un ε > 0
     rintros H x ε ε_positif,
     -- La boule de centre x et de rayon epsilon est un ouvert de Y,
@@ -319,16 +308,35 @@ begin
     -- ce qu'on voulait
     have symetrie_y : d_[Y] (f x) (f x') = d_[Y] (f x') (f x), from  sym (f x) (f x'),
     rw symetrie_y at fx'_boule,
-    assumption},
+    assumption }
 end
 
--- composition (ponctuelle, globale)
+variables {Z : Type} [espace_metrique Z]
+
+/-- La composée de deux applications continues est continue-/
+lemma composition_continue (f : X → Y) (g : Y → Z) : (continue f) →  (continue g) →  continue (g ∘ f) :=
+begin
+-- Supposons que f et g sont continues
+intros f_cont g_cont, 
+-- Nous allons utiliser la caractérisation topologique pour montrer la continuité de g ∘ f :
+rw continuite_ouverts,
+-- On considère un ouvert O de Z
+intros O O_ouvert,
+-- La caractérisation topologique de la continuité de g nous dit que g ⁻¹' O est un ouvert de Y,
+have ouvert1 : ouvert (g ⁻¹' O), 
+  from (((iff.elim_left (continuite_ouverts g)) g_cont) O) O_ouvert,
+-- La caractérisation topologique de la continuité de f nous dit que f ⁻¹' (g ⁻¹' O) est un ouvert de X,
+exact (((iff.elim_left (continuite_ouverts f)) f_cont) (g ⁻¹' O)) ouvert1,
+-- et il est égal à (g ∘ f)  ⁻¹' O, CQFD
+end
+
+-- A FAIRE : caractérisation topologique de la continuité ponctuelle par les voisinages, 
+-- et composition ponctuelle
 
 def lipschitzienne (k:ℝ) (f: X → Y) := 
 ∀ x₀  x₁ , d_[Y] (f x₀) (f x₁) ≤ ( k * d_[X] x₀  x₁ )
 
--- lipschitzien implique continu
-
+-- A FAIRE : lipschitzien implique continu
 
 end continuite
 
@@ -357,10 +365,12 @@ end fermes
 section suites
 variables {X:Type} [espace_metrique X]
 
+-- def converge (x: ℕ → X) (l : X) := ∀ ε > 0, ∃ N, ∀ n ≥ N, ((d l (x n))  < ε)
 
 
 
-
+-- lemma unicite_limite (x: ℕ → X) (l₁ : X) (l₂ : X) (converge x l₁) (converge x l₂) :
+--   l₁ = l₂ :=
 
 end suites
 
