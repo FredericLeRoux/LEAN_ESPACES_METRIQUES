@@ -81,7 +81,7 @@ begin
   -- dans boule x r
   set ε := r - d x y with hε,
   use  ε, -- le rayon candidat
-  rw exists_prop,
+  -- OBSOLETE rw exists_prop,
   split,
   { -- La ligne suivante peut être remplacée par n'importe laquelle des trois lignes qui la suivent
     simp [boule] at y_in,
@@ -140,7 +140,7 @@ begin
   obtain ⟨r₂,r₂_pos,boule_dans_O₂⟩ : ∃ r₂>0, boule x r₂ ⊆ O₂, from ouvert_O₂ x x_app_O₂,
   -- Montrons que le minimum r des deux convient
   use min r₁ r₂, 
-  rw exists_prop,
+  -- OBSOLETE rw exists_prop,
   -- Il est bien positif
   split, 
     by exact lt_min r₁_pos r₂_pos,
@@ -169,7 +169,7 @@ lemma total_ouvert : ouvert (univ : set X) :=
 begin
   intros x hx,  
   use 1,
-  rw exists_prop,
+  -- OBSOLETE rw exists_prop,
   split,
     exact zero_lt_one,
     exact subset_univ (boule x 1),
@@ -524,9 +524,7 @@ end
 
 
 lemma nonvide_ssi_existe_element (A : set X) : A ≠ ∅ ↔ ∃ a : X, a ∈ A :=
-begin
-  exact ne_empty_iff_exists_mem,
-end
+ne_empty_iff_nonempty
 
 lemma essai (a : ℝ) (b : ℝ) (c : ℝ) (H1 : a > b) (H2 : b > c) : a > c := 
 begin 
@@ -580,9 +578,9 @@ split,
     transitivity 1 / (↑n + 1:ℝ),
       exact Hutile,
     have NZ : ε ≠ 0, by linarith,
-    have inv_inv_ε : ε = 1/(1/ε), by inv_inv2 NZ,
+    -- have inv_inv_ε : ε = 1/(1/ε), by inv_inv2 NZ,
     
-      sorry,
+      
 
     sorry,
   -- Pour l'autre direction, on suppose l'existence d'une suite 
@@ -599,9 +597,9 @@ have HNN: N ≥ N, by linarith,
 specialize HN N HNN,
 rw← mem_boule at HN,
 specialize H1 N,
-rw ne_empty_iff_exists_mem,
+rw ne_empty_iff_nonempty,
 use x N,
-exact and.intro HN H1,
+exact and.intro HN H1
 end
 
 example  (a : ℝ) (b : ℝ) (a_pos : a>0) (a_inf_b : a <b) : 1/a > 1/b := 
